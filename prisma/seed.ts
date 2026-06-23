@@ -74,7 +74,12 @@ const preorders = [
 ];
 
 async function main() {
-  await prisma.preorder.deleteMany();
+  
+  const existing = await prisma.preorder.count();
+  if (existing > 0) {
+    console.log(`Skipping seed — ${existing} preorders already present.`);
+    return;
+  }
 
   for (const data of [...preorders].reverse()) {
     await prisma.preorder.create({ data });
