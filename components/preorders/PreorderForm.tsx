@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import type { FormState } from "@/app/actions";
 import { Switch } from "@/components/ui/Switch";
 import { ChevronLeftIcon, SpinnerIcon } from "@/components/ui/icons";
@@ -13,21 +13,15 @@ import { PREORDER_WHEN_OPTIONS, type Preorder } from "@/lib/types";
 type PreorderFormProps = {
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
   preorder?: Preorder;
+  // Where to return after save/cancel — the list URL (with filter/sort/page)
+  // resolved by the server page so we land back on the same tab.
+  returnTo: string;
 };
 
-export function PreorderForm({ action, preorder }: PreorderFormProps) {
+export function PreorderForm({ action, preorder, returnTo }: PreorderFormProps) {
   const [state, formAction] = useActionState<FormState, FormData>(action, {});
   const [active, setActive] = useState(preorder?.active ?? true);
   const errors = state.errors ?? {};
-
-  // Where to return after save/cancel. The list page links here with `?from=`
-  // carrying its current filter/sort/page so we land back on the same tab.
-  const searchParams = useSearchParams();
-  const fromParam = searchParams.get("from");
-  const returnTo =
-    fromParam && fromParam.startsWith("/") && !fromParam.startsWith("//")
-      ? fromParam
-      : "/";
 
   return (
     <form action={formAction} className="mx-auto w-full max-w-4xl px-6 py-8">
