@@ -25,7 +25,7 @@ export function Pagination({ page, pageCount, total, pageSize }: PaginationProps
   }
 
   return (
-    <div className="flex items-center justify-center gap-4 border-t border-neutral-200 bg-neutral-50 px-4 py-3">
+    <div className="flex items-center justify-center gap-4 rounded-b-2xl border-t border-neutral-200 bg-neutral-50 px-4 py-3">
       <NavButton
         ariaLabel="Previous page"
         disabled={page <= 1}

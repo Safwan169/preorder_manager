@@ -40,7 +40,7 @@ export default async function PreordersPage({ searchParams }: PageProps) {
         </Link>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
+      <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
         <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-3">
           <FilterTabs />
           <SortMenu />
