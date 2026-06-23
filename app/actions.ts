@@ -9,6 +9,14 @@ export type FormState = {
   errors?: Record<string, string>;
 };
 
+function safeReturnTo(formData: FormData): string {
+  const raw = formData.get("returnTo");
+  if (typeof raw === "string" && raw.startsWith("/") && !raw.startsWith("//")) {
+    return raw;
+  }
+  return "/";
+}
+
 export async function createPreorder(
   _prev: FormState,
   formData: FormData,
@@ -24,8 +32,9 @@ export async function createPreorder(
     return { errors: { form: "Could not create the preorder. Please try again." } };
   }
 
+  const returnTo = safeReturnTo(formData);
   revalidatePath("/");
-  redirect("/");
+  redirect(returnTo);
 }
 
 export async function updatePreorder(
@@ -44,8 +53,9 @@ export async function updatePreorder(
     return { errors: { form: "Could not save changes. The preorder may no longer exist." } };
   }
 
+  const returnTo = safeReturnTo(formData);
   revalidatePath("/");
-  redirect("/");
+  redirect(returnTo);
 }
 
 export async function togglePreorderStatus(id: string, active: boolean) {

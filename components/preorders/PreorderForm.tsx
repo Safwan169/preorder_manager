@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { FormState } from "@/app/actions";
 import { Switch } from "@/components/ui/Switch";
 import { ChevronLeftIcon, SpinnerIcon } from "@/components/ui/icons";
@@ -20,18 +20,28 @@ export function PreorderForm({ action, preorder }: PreorderFormProps) {
   const [active, setActive] = useState(preorder?.active ?? true);
   const errors = state.errors ?? {};
 
+  // Where to return after save/cancel. The list page links here with `?from=`
+  // carrying its current filter/sort/page so we land back on the same tab.
+  const searchParams = useSearchParams();
+  const fromParam = searchParams.get("from");
+  const returnTo =
+    fromParam && fromParam.startsWith("/") && !fromParam.startsWith("//")
+      ? fromParam
+      : "/";
+
   return (
     <form action={formAction} className="mx-auto w-full max-w-4xl px-6 py-8">
+      <input type="hidden" name="returnTo" value={returnTo} />
       <div className="mb-6 flex items-center justify-between">
         <Link
-          href="/"
+          href={returnTo}
           className="flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50"
         >
           <ChevronLeftIcon width={16} height={16} />
           Back
         </Link>
         <div className="flex items-center gap-2">
-          <CancelButton />
+          <CancelButton returnTo={returnTo} />
           <SubmitButton />
         </div>
       </div>
@@ -152,7 +162,7 @@ export function PreorderForm({ action, preorder }: PreorderFormProps) {
         </div>
 
         <div className="flex items-center justify-end gap-2 border-t border-neutral-100 px-6 py-4">
-          <CancelButton />
+          <CancelButton returnTo={returnTo} />
           <SubmitButton />
         </div>
       </div>
@@ -193,14 +203,14 @@ function Field({
   );
 }
 
-function CancelButton() {
+function CancelButton({ returnTo }: { returnTo: string }) {
   const router = useRouter();
   const { pending } = useFormStatus();
   return (
     <button
       type="button"
       disabled={pending}
-      onClick={() => router.push("/")}
+      onClick={() => router.push(returnTo)}
       className="rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50 disabled:opacity-50"
     >
       Cancel

@@ -28,12 +28,21 @@ export default async function PreordersPage({ searchParams }: PageProps) {
     endsAt: item.endsAt ? item.endsAt.toISOString() : null,
   }));
 
+  const currentQuery = new URLSearchParams();
+  for (const key of ["status", "sort", "direction", "page"] as const) {
+    const value = asString(params[key]);
+    if (value) currentQuery.set(key, value);
+  }
+  const queryString = currentQuery.toString();
+  const fromHref = queryString ? `/?${queryString}` : "/";
+  const createHref = `/preorders/new?from=${encodeURIComponent(fromHref)}`;
+
   return (
     <main className="mx-auto w-full max-w-5xl px-6 py-10">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-neutral-900">Preorders</h1>
         <Link
-          href="/preorders/new"
+          href={createHref}
           className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-neutral-800"
         >
           Create Preorder

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useOptimistic, useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { deletePreorder, togglePreorderStatus } from "@/app/actions";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -113,9 +113,15 @@ function PreorderRow({
   onRemoved: () => void;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [pending, startTransition] = useTransition();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [active, setOptimisticActive] = useOptimistic(preorder.active);
+
+  const query = searchParams.toString();
+  const fromHref = query ? `${pathname}?${query}` : pathname;
+  const editHref = `/preorders/${preorder.id}/edit?from=${encodeURIComponent(fromHref)}`;
 
   function onToggle(next: boolean) {
     startTransition(async () => {
@@ -176,7 +182,7 @@ function PreorderRow({
       <td className="px-2 py-4">
         <div className="flex items-center gap-2">
           <Link
-            href={`/preorders/${preorder.id}/edit`}
+            href={editHref}
             aria-label={`Edit ${preorder.name}`}
             className={iconButtonClass}
           >
