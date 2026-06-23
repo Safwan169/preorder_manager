@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum PreorderWhen {
+  REGARDLESS_OF_STOCK
+  OUT_OF_STOCK
+}
+
+model Preorder {
+  id          String       @id @default(cuid())
+  name        String
+  products    Int          @default(1)
+  preorderWhen PreorderWhen @default(REGARDLESS_OF_STOCK)
+  startsAt    DateTime
+  endsAt      DateTime?
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
